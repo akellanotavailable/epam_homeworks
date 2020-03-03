@@ -1,47 +1,36 @@
 package com.epam.springcloud.products;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ProductsRepository {
-    private final ProductsFactory factory;
-    private List<Product> productList = new ArrayList<>();
+    private Map<String, Long> productCatalog = new HashMap<>();
 
-    @Autowired
-    public ProductsRepository(ProductsFactory factory) {
-        this.factory = factory;
+    public void add(String name, Long quantity) {
+        productCatalog.put(name, quantity);
     }
 
-    public void add(Product newProduct) {
-        productList.add(newProduct);
+    public Long getQuantity(String name) {
+        return productCatalog.getOrDefault(name, 0L);
     }
 
-    public Optional<Product> getByName(String name) {
-        return productList.stream()
-                .filter(product -> product.getName().equals(name))
-                .findFirst();
+    public Long removeOneByName(String name) {
+        var quantity = productCatalog.computeIfPresent(name, (key, value) -> --value);
+
+        if (quantity <= 0) {
+            productCatalog.remove(name);
+        }
+
+        return quantity;
     }
 
     public List<Product> getAll() {
-        return new ArrayList<>(productList);
-    }
-
-    @PostConstruct
-    private void init() {
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
-        add(factory.createProduct());
+        return productCatalog.entrySet().stream()
+                .map(entry -> new Product(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }

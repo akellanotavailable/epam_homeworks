@@ -1,11 +1,8 @@
 package com.pigorv.springcloud.orders;
 
 import lombok.Data;
-import lombok.ToString;
 
 @Data
-@ToString
-public class ProductDto {
+public class UserDto {
     private String name;
-    private Long price;
 }

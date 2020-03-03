@@ -1,2 +1,10 @@
 server:
   port: 8181
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: DEBUG

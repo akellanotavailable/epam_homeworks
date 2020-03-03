@@ -1,5 +1,10 @@
 server:
   port: 8282
-services:
-  products:
-    url: http://localhost:8181/products
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: DEBUG

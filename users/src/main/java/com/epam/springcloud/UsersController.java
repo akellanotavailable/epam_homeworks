@@ -1,33 +1,54 @@
 package com.epam.springcloud;
 
-import org.apache.commons.lang3.RandomUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-@RequestMapping("/users")
+@RequestMapping
 @RestController
 public class UsersController {
+    private Map<String, User> registeredUsers = new HashMap<>();
+
     @Autowired
     RestTemplate restTemplate;
 
     @PostMapping
-    public User createNewUser(@RequestParam String name) {
-        var user = new User();
-        user.setName(name);
-        user.setId(RandomUtils.nextLong());
-        user.setDeposit(1000L);
+    public User createUser() {
+        var user = new User(RandomStringUtils.randomAlphabetic(13));
+        registeredUsers.put(user.getName(), user);
 
         return user;
+    }
+
+    @GetMapping("/{userName}")
+    public ResponseEntity<User> getUser(@PathVariable String userName) {
+        User user = registeredUsers.get(userName);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userName}/products")
+    public List getProductsByUser(@PathVariable String userName) {
+        return restTemplate.getForObject("http://localhost:8282/users/" + userName, List.class);
     }
 
     @Bean
     RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
-
 }
