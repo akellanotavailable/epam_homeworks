@@ -40,7 +40,7 @@ curl -X GET GET http://localhost:8383/{сreatedUserName}/products
 ### Use User service:
 ``` bash
 curl --url http://localhost:8282/ \
-     -H 'content-type: application/json' \
+     -H "Content-Type: application/json" \
      -d '{"userName": "{сreatedUserName}", "product": "{сreatedProductName}"}'
 ```
 Get user's products:

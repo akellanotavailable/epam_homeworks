@@ -1,8 +1,12 @@
 package com.pigorv.springcloud.orders;
 
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +28,17 @@ public class OrdersController {
 
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    DiscoveryClient discoveryClient;
 
     @PostMapping
     public ResponseEntity<Order> createNewOrder(@RequestBody Order order) {
+        ServiceInstance usersInfo = discoveryClient.getInstances("users").get(0);
+        String hostName = usersInfo.getHost();
+        int port = usersInfo.getPort();
+
         try {
-            restTemplate.getForObject("http://localhost:8383/" + order.getUserName(), UserDto.class);
+            restTemplate.getForObject("http://" + hostName + ":" + port + "/" + order.getUserName(), UserDto.class);
         } catch (RestClientException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
