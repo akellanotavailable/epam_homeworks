@@ -8,6 +8,7 @@
 		<module>orders</module>
 		<module>users</module>
 		<module>eureka-server</module>
+		<module>gateway</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
