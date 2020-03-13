@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,10 +45,11 @@ public class UsersController {
 
     @GetMapping("/{userName}/products")
     public List getProductsByUser(@PathVariable String userName) {
-        return restTemplate.getForObject("http://localhost:8282/users/" + userName, List.class);
+        return restTemplate.getForObject("http://orders/users/" + userName, List.class);
     }
 
     @Bean
+    @LoadBalanced
     RestTemplate getRestTemplate() {
         return new RestTemplate();
     }

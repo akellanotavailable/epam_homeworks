@@ -1,7 +1,5 @@
 package com.pigorv.springcloud.orders;
 
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,11 @@ public class OrdersController {
     RestTemplate restTemplate;
     @Autowired
     DiscoveryClient discoveryClient;
+
+    @GetMapping
+    public String health() {
+        return "OK";
+    }
 
     @PostMapping
     public ResponseEntity<Order> createNewOrder(@RequestBody Order order) {
