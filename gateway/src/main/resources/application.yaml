@@ -13,6 +13,9 @@ zuul:
     products:
       path: /products/**
 
+ribbon:
+  ReadTimeout: 10000
+
 logging:
   level:
     org:

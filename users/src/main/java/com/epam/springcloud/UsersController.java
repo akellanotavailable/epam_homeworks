@@ -1,5 +1,7 @@
 package com.epam.springcloud;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,8 +46,13 @@ public class UsersController {
     }
 
     @GetMapping("/{userName}/products")
+    @HystrixCommand(fallbackMethod = "getDefaultProducts")
     public List getProductsByUser(@PathVariable String userName) {
         return restTemplate.getForObject("http://orders/users/" + userName, List.class);
+    }
+
+    private ArrayList<String> getDefaultProducts(String value) {
+        return new ArrayList<>(List.of("One", "Two", "Three"));
     }
 
     @Bean
