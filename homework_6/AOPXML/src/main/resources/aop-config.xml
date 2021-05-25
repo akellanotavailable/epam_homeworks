@@ -1,0 +1,24 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd ">
+
+
+    <aop:config>
+        <aop:pointcut id="logged" expression="@annotation(com.epam.annotation.Logged)"/>
+        <aop:aspect ref="loggingAspect">
+            <aop:before method="beforeAdvice" pointcut-ref="logged"/>
+        </aop:aspect>
+        <aop:aspect ref="loggingAspect">
+            <aop:after-returning method="afterReturningAdvice" pointcut-ref="logged"/>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="loggingAspect" class="com.epam.aspect.LoggingAspect"/>
+    <bean id="numberFinder" class="com.epam.service.NumberSearcher"/>
+
+
+</beans>
