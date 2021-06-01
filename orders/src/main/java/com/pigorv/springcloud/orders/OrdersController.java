@@ -2,6 +2,8 @@ package com.pigorv.springcloud.orders;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -21,13 +23,18 @@ import static java.util.stream.Collectors.toList;
 
 @RequestMapping
 @RestController
+@RequiredArgsConstructor
 public class OrdersController {
     private List<Order> orderList = new ArrayList<>();
 
     @Autowired
-    RestTemplate restTemplate;
-    @Autowired
     DiscoveryClient discoveryClient;
+
+    @Autowired
+    NotificationOrder notificationOrder;
+
+    @Autowired
+    ProductOrder productOrder;
 
     @GetMapping
     public String health() {
@@ -36,24 +43,11 @@ public class OrdersController {
 
     @PostMapping
     public ResponseEntity<Order> createNewOrder(@RequestBody Order order) {
-        ServiceInstance usersInfo = discoveryClient.getInstances("users").get(0);
-        String hostName = usersInfo.getHost();
-        int port = usersInfo.getPort();
+        productOrder.getProductName(order.getProduct());
 
-        try {
-            restTemplate.getForObject("http://" + hostName + ":" + port + "/" + order.getUserName(), UserDto.class);
-        } catch (RestClientException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        try {
-            restTemplate.put("http://localhost:8181/" + order.getProduct(), null);
-        } catch (RestClientException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        notificationOrder.createNotification(order.getUserName());
 
         orderList.add(order);
-
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
@@ -65,8 +59,4 @@ public class OrdersController {
                 .collect(toList());
     }
 
-    @Bean
-    private RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
 }

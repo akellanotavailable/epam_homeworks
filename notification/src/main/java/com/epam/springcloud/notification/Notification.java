@@ -9,7 +9,8 @@ public class Notification {
     String user;
     Notifier notifyBy = Notifier.EMAIL;
 
-    enum Notifier {
-        EMAIL
+    enum Notifier{
+        EMAIL,
+        CALL
     }
 }

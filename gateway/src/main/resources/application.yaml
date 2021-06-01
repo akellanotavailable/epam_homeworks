@@ -12,6 +12,8 @@ zuul:
       path: /orders/**
     products:
       path: /products/**
+    notifications:
+      path: /notifications/**
 
 ribbon:
   ReadTimeout: 10000

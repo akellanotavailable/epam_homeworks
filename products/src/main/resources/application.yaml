@@ -13,6 +13,20 @@ spring:
   application:
     name: products
 
+feign:
+  hystrix:
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      circuitBreaker:
+        requestVolumeThreshold: 3
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2000
+
 eureka:
   client:
     serviceUrl:
