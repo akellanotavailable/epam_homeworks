@@ -1,0 +1,43 @@
+version: '3.7'
+
+networks:
+  mynet:
+    driver: bridge
+
+volumes:
+  data:
+
+services:
+
+  database:
+    image: mysql
+    ports:
+      - 3306:3306
+    networks:
+      - mynet
+    container_name: super_mysql
+    hostname: database
+    restart: always
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 12345
+      MYSQL_DATABASE: hw14
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+
+  webapp:
+    build: .
+    ports:
+      - 8080:8080
+    networks:
+      - mynet
+    restart: always
+    container_name: webapp
+    hostname: webservice
+    depends_on:
+      - database
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
